@@ -1,0 +1,33 @@
+# Lingkungan Virtual
+# Jangan pernah memasukkan folder lingkungan virtual Anda ke dalam Git.
+venv/
+*.venv
+.venv
+
+# File Bytecode dan Cache Python
+# File-file ini dibuat secara otomatis oleh Python.
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# File Konfigurasi Editor/IDE
+# Setiap developer memiliki pengaturan editornya sendiri.
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# File Sensitif
+# .env sudah ada, ini adalah praktik yang sangat baik.
+.env
+
+# Direktori Buatan Aplikasi
+# Direktori ini berisi file yang diunggah pengguna dan presentasi yang dihasilkan.
+uploads/
+presentations/
+
+# Artefak Testing
+.pytest_cache/
+.coverage
+htmlcov/

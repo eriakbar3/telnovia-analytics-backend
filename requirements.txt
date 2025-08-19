@@ -1,0 +1,23 @@
+# Web Framework
+fastapi
+uvicorn[standard]
+
+# Database & ORM
+sqlalchemy
+psycopg2-binary
+alembic
+
+# Data Analysis & File Handling
+polars
+python-multipart
+openpyxl
+
+# Authentication & Security
+passlib[bcrypt]
+python-jose[cryptography]
+
+# Presentation Generation
+python-pptx
+
+# Environment Configuration
+python-dotenv
