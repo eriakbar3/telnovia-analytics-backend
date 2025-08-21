@@ -13,6 +13,11 @@ class Settings(BaseSettings):
     secret_key: str
     algorithm: str
     access_token_expire_minutes: int
+
+    # Key for encrypting/decrypting sensitive data like connection passwords
+    encryption_key: str
+    
+    openai_api_key: str
     
     class Config:
         env_file = ".env" # Specifies the file to load variables from

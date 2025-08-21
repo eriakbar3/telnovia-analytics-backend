@@ -10,7 +10,7 @@ router = APIRouter(
 )
 
 @router.get("/users/me", response_model=schemas.UserOut)
-def read_users_me(current_user: schemas.UserOut = Depends(get_current_user)):
+def read_users_me(current_user: models.User = Depends(get_current_user)):
     """
     Endpoint terproteksi untuk mendapatkan detail pengguna yang sedang login.
     Fungsi `get_current_user` sebagai dependency akan menangani semua validasi token.

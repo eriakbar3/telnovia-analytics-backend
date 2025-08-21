@@ -4,18 +4,58 @@ import uuid
 from fastapi import APIRouter, File, UploadFile, Depends, HTTPException
 from typing import List
 import json # <-- Impor library json
+import psycopg2 # Library untuk terhubung ke Postgres
 import polars as pl
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 
 from app.database import get_db
 from app.auth.oauth2 import get_current_user
 from app import crud, schemas
 from app.analysis.data_quality import generate_health_report
+from app.core.security import decrypt_password
 
 router = APIRouter(
     prefix="/api/v1",
     tags=['Notebooks']
 )
+
+# Skema untuk request body, spesifik untuk endpoint ini.
+# Untuk aplikasi yang lebih besar, ini bisa dipindahkan ke app/schemas.py
+class NotebookFromDbRequest(BaseModel):
+    connection_id: int
+
+@router.post("/notebooks/from_connection", response_model=schemas.NotebookOut, status_code=201)
+def create_notebook_from_db_connection(
+    request: NotebookFromDbRequest,
+    db: Session = Depends(get_db),
+    current_user: schemas.UserOut = Depends(get_current_user)
+):
+    """
+    Membuat notebook baru yang terhubung dengan koneksi database yang ada.
+    Endpoint ini akan memvalidasi koneksi sebelum membuat notebook.
+    """
+    conn_id = request.connection_id
+    db_conn = crud.get_db_connection(db, conn_id=conn_id, owner_id=current_user.id)
+    if not db_conn:
+        raise HTTPException(status_code=404, detail="Koneksi database tidak ditemukan.")
+
+    # Dekripsi password dan coba hubungkan untuk memvalidasi koneksi
+    try:
+        password = decrypt_password(db_conn.encrypted_password)
+        conn = psycopg2.connect(
+            host=db_conn.host,
+            port=db_conn.port,
+            dbname=db_conn.dbname,
+            user=db_conn.username,
+            password=password
+        )
+        conn.close() # Jika berhasil terhubung, tutup koneksi tes
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Gagal terhubung ke database eksternal: {e}")
+
+    # Buat entri notebook baru di database dan kembalikan objek notebook lengkap
+    return crud.create_notebook_from_db(db, conn=db_conn, owner_id=current_user.id)
 
 @router.post("/upload", status_code=201)
 def upload_file_and_create_notebook(

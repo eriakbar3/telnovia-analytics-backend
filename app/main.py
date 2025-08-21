@@ -10,9 +10,12 @@ from app.analysis.router import router as analysis_router
 from app.notebooks.router import router as notebook_router
 from app.presentation.router import router as presentation_router
 from app.sharing.router import router as sharing_router
+from app.datasources.router import router as datasources_router
+from app.teams.router import router as teams_router
 
 # Membuat tabel di database (jika belum ada) saat aplikasi dimulai
-models.Base.metadata.create_all(bind=engine)
+# Disarankan untuk mengelola skema database menggunakan Alembic di lingkungan produksi.
+# models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Telnovia Analytics Backend",
@@ -39,6 +42,8 @@ app.include_router(analysis_router)
 app.include_router(notebook_router)
 app.include_router(presentation_router)
 app.include_router(sharing_router) 
+app.include_router(datasources_router)
+app.include_router(teams_router)
 @app.get("/")
 def read_root():
     """

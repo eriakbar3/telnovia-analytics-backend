@@ -15,14 +15,17 @@ router = APIRouter(
 
 @router.post("/register", response_model=schemas.UserOut)
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    """
-    Mendaftarkan pengguna baru.
-    Memeriksa apakah email sudah ada, lalu membuat pengguna baru di database.
-    """
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email sudah terdaftar")
-    return crud.create_user(db=db, user=user)
+    
+    new_user = crud.create_user(db=db, user=user)
+    
+    # --- PERUBAHAN DI SINI ---
+    # Buat tim baru untuk pengguna yang baru mendaftar
+    crud.create_team_for_user(db=db, user=new_user)
+    
+    return new_user
 
 
 @router.post("/token")

@@ -9,6 +9,7 @@ alembic
 
 # Data Analysis & File Handling
 polars
+pandas
 python-multipart
 openpyxl
 
@@ -21,3 +22,9 @@ python-pptx
 
 # Environment Configuration
 python-dotenv
+pydantic-settings
+pydantic[email]
+cryptography
+openai
+dowhy
+pyarrow
